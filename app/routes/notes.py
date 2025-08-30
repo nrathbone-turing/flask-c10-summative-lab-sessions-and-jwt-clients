@@ -56,6 +56,55 @@ def create_note():
     db.session.commit()
     return note_schema.dump(note), 201
 
+
+@bp.get("/<int:note_id>")
+@login_required
+def get_note(note_id):
+    """
+    Retrieve a single note by ID.
+    - Returns 200 with the note if found and owned by the current user.
+    - Returns 403 if the note belongs to another user.
+    - Returns 404 if the note does not exist.
+    """
+    note = db.session.get(Note, note_id)
+    if not note:
+        return {"error": "Note not found"}, 404
+    if note.user_id != current_user.id:
+        return {"error": "Not authorized to view this note."}, 403
+    return note_schema.dump(note), 200
+
+
+@bp.put("/<int:id>")
+@login_required
+def update_note(id):
+    """
+    Update an existing note owned by the current logged-in user.
+    - Path param: <id> (note ID)
+    - Requires JSON body with at least one of: 'title', 'body'
+    - Returns 200 with the updated note on success
+    - Returns 400 if no updatable fields are provided
+    - Returns 403 if the note does not belong to the current user
+    - Returns 404 if the note is not found
+    """
+    note = db.session.get(Note, id)
+
+    if note.user_id != current_user.id:
+        return {"error": "Not authorized to update this note."}, 403
+
+    data = request.get_json() or {}
+
+    if not any(field in data for field in ("title", "body")):
+        return {"error": "At least one of 'title' or 'body' is required."}, 400
+
+    if "title" in data and data["title"].strip():
+        note.title = data["title"].strip()
+    if "body" in data:
+        note.body = data["body"]
+
+    db.session.commit()
+    return note_schema.dump(note), 200
+
+
 @bp.delete("/<int:note_id>")
 @login_required
 def delete_note(note_id):
