@@ -80,3 +80,89 @@ def test_get_nonexistent_note_returns_404(client):
     resp = client.get("/notes/999")
     assert resp.status_code == 404
     assert "not found" in resp.json["error"]
+
+def test_update_note(client):
+    """Update an existing note owned by the user."""
+    # Register + login
+    client.post("/signup", json={
+        "username": "noteup@example.com",
+        "password": "pw",
+        "password_confirmation": "pw"
+    })
+    # Create a note
+    resp = client.post("/notes", json={"title": "Original", "body": "Hello"})
+    note_id = resp.json["id"]
+
+    # Update title
+    resp = client.put(f"/notes/{note_id}", json={"title": "Updated Title"})
+    assert resp.status_code == 200
+    assert resp.json["title"] == "Updated Title"
+
+    # Update body
+    resp = client.put(f"/notes/{note_id}", json={"body": "New body"})
+    assert resp.status_code == 200
+    assert resp.json["body"] == "New body"
+
+def test_update_note_invalid_fields(client):
+    """Updating with no valid fields should return 400."""
+    client.post("/signup", json={
+        "username": "noteinv@example.com",
+        "password": "pw",
+        "password_confirmation": "pw"
+    })
+    resp = client.post("/notes", json={"title": "To update", "body": "Body"})
+    note_id = resp.json["id"]
+
+    resp = client.put(f"/notes/{note_id}", json={})
+    assert resp.status_code == 400
+    assert "error" in resp.json
+
+def test_update_note_unauthorized(client):
+    """Users cannot update notes they don't own."""
+    # First user creates a note
+    client.post("/signup", json={
+        "username": "owner@example.com",
+        "password": "pw",
+        "password_confirmation": "pw"
+    })
+    resp = client.post("/notes", json={"title": "Owner note"})
+    note_id = resp.json["id"]
+
+    # Second user registers
+    client.post("/logout")
+    client.post("/signup", json={
+        "username": "intruder@example.com",
+        "password": "pw",
+        "password_confirmation": "pw"
+    })
+    # Try to update owner's note
+    resp = client.put(f"/notes/{note_id}", json={"title": "Hacked!"})
+    assert resp.status_code == 403
+
+def test_delete_note(client):
+    """Delete a note owned by the current user."""
+    client.post("/signup", json={
+        "username": "notedel@example.com",
+        "password": "pw",
+        "password_confirmation": "pw"
+    })
+    resp = client.post("/notes", json={"title": "To delete"})
+    note_id = resp.json["id"]
+
+    resp = client.delete(f"/notes/{note_id}")
+    assert resp.status_code == 204
+
+    # Confirm it's gone
+    resp = client.get("/notes")
+    assert all(n["id"] != note_id for n in resp.json["data"])
+
+def test_delete_note_not_found(client):
+    """Deleting a non-existent note returns 404."""
+    client.post("/signup", json={
+        "username": "missingdel@example.com",
+        "password": "pw",
+        "password_confirmation": "pw"
+    })
+    resp = client.delete("/notes/9999")
+    assert resp.status_code == 404
+    assert "error" in resp.json
