@@ -59,16 +59,14 @@ def login():
 
 
 @bp.delete("/logout")
-@login_required
 def logout():
     """
     Log out the current user.
-    - Requires an active session.
-    - Returns 200 with empty JSON {} on success.
+    - Returns {} whether or not a session existed.
     """
-    logout_user()
+    if current_user.is_authenticated:
+        logout_user()
     return {}, 200
-
 
 @bp.get("/check_session")
 def check_session():

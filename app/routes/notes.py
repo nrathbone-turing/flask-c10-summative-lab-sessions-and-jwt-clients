@@ -56,5 +56,21 @@ def create_note():
     db.session.commit()
     return note_schema.dump(note), 201
 
+@bp.delete("/<int:note_id>")
+@login_required
+def delete_note(note_id):
+    """
+    Delete a note owned by the current logged-in user.
+    - Requires the note ID in the URL path.
+    - Only deletes the note if it belongs to the current user.
+    - Returns 204 with an empty body if successful.
+    - Returns 404 if the note does not exist or does not belong to the user.
+    """
+    note = Note.query.filter_by(id=note_id, user_id=current_user.id).first()
+    if not note:
+        return {"error": "Note not found"}, 404
+    db.session.delete(note)
+    db.session.commit()
+    return {}, 204
 
 notes_bp = bp
