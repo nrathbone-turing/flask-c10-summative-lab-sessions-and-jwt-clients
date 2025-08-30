@@ -29,6 +29,7 @@ share/python-wheels/
 
 # Database
 *.db
+*.sqlite
 *.sqlite3
 instance/
 migrations/versions/*.pyc
@@ -47,6 +48,9 @@ htmlcov/
 # Environment variables
 .env
 *.env
+
+# Flask env
+.flaskenv
 
 # OS junk
 .DS_Store

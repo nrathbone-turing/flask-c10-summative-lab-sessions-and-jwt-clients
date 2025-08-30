@@ -13,11 +13,12 @@ Users can register, log in, and manage personal notes securely. The backend is d
 - Seed script with demo user + notes
 
 ## Future Considerations
-- **Frontend Integration**: Connect this backend to the provided React client (`client-with-sessions`) for a complete user experience.  
-- **Production Database**: Swap SQLite for Postgres (or another RDBMS) for scalability.  
-- **Security Enhancements**: Add CSRF protection, stronger password policies, and rate limiting.  
-- **Additional Resources**: Extend beyond notes (e.g., tasks, expenses, journal entries) with more models and CRUD endpoints.  
-- **Testing Coverage**: Add more validation/error-handling tests (e.g., empty note title updates, invalid JSON payloads).  
+- **Frontend Integration**: Connect this backend to the provided React client (`client-with-sessions`) for full end-to-end functionality.
+- **Production Database**: Replace SQLite with Postgres (or another production-ready RDBMS) for scalability.  
+- **Security Enhancements**: Add CSRF protection, enforce stronger password rules, and consider rate limiting login/signup attempts.
+- **Additional Resources**: Add additional resources beyond notes (e.g., tasks, expenses, journal entries) with corresponding CRUD + tests.
+- **Testing Coverage**: Expand pytest coverage for edge cases (invalid JSON payloads, malformed requests, stress/performance tests).
+**Dev Experience**: Improve editor compatibility (e.g., Pipenv + VSCode/Pylance integration), Dockerize environment for smoother setup.
 
 ## Tech Stack
 - **Backend**: Flask + Flask-Migrate + SQLAlchemy
