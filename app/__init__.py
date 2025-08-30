@@ -27,12 +27,13 @@ def create_app():
     login_manager.init_app(app)
 
     # --- Blueprints ---
-    from .routes.auth import bp as auth_bp
-    from .routes.notes import bp as notes_bp
+    from .routes.auth import auth_bp
+    from .routes.notes import notes_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(notes_bp, url_prefix="/notes")
 
+    # --- Health check ---
     @app.get("/")
     def health():
         return {"status": "ok"}
@@ -41,4 +42,5 @@ def create_app():
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Flask-Login user loader callback"""
     return User.query.get(int(user_id))

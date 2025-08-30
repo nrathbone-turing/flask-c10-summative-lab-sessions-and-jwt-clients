@@ -74,3 +74,5 @@ def me():
     - Returns 200 with user data.
     """
     return {"user": user_schema.dump(current_user)}, 200
+
+auth_bp = bp

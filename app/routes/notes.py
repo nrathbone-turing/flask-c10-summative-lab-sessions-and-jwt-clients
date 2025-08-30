@@ -55,3 +55,5 @@ def create_note():
     db.session.add(note)
     db.session.commit()
     return note_schema.dump(note), 201
+
+notes_bp = bp
