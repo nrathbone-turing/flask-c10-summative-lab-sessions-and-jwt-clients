@@ -5,16 +5,20 @@
 # - Pagination of notes
 # - Handle invalid/missing notes (404s)
 
-def login(client, email="noteuser@example.com", password="pw"):
-    """Helper: register and log in a test user."""
-
-    client.post("/auth/register", json={"email": email, "password": password})
+def signup_and_login(client, username="noteuser", password="pw"):
+    """Helper: sign up and log in a test user."""
+    client.post("/signup", json={
+        "username": username,
+        "password": password,
+        "password_confirmation": password
+    })
     return client
+
 
 def test_create_and_list_notes(client):
     """Create a note and verify it appears in notes list."""
 
-    client = login(client)
+    client = signup_and_login(client)
 
     # Create
     resp = client.post("/notes", json={"title": "Test Note", "body": "Hello"})
@@ -26,16 +30,18 @@ def test_create_and_list_notes(client):
     assert resp.status_code == 200
     assert len(resp.json["data"]) == 1
 
+
 def test_notes_requires_login(client):
     """Accessing /notes without login should return 302 or 401."""
-    
+
     resp = client.get("/notes")
     assert resp.status_code in (302, 401)
 
+
 def test_notes_pagination(client):
     """Verify pagination works: per_page, page count, empty pages."""
-    
-    client = login(client)
+
+    client = signup_and_login(client)
 
     # Create 15 notes
     for i in range(15):
@@ -66,16 +72,11 @@ def test_notes_pagination(client):
     assert data["meta"]["page"] == 10
     assert data["meta"]["pages"] == 3
 
-def test_cannot_access_notes_without_login(client):
-    """Unauthorized request to /notes should be blocked."""
-    
-    resp = client.get("/notes")
-    assert resp.status_code in (302, 401)
 
 def test_get_nonexistent_note_returns_404(client):
     """Requesting a non-existent note ID should return 404."""
-    
-    client.post("/auth/register", json={"email": "noteuser@example.com", "password": "pw"})
+
+    signup_and_login(client)
     resp = client.get("/notes/999")
     assert resp.status_code == 404
-    assert "not found" in resp.json["error"]  # explicit error message check
+    assert "not found" in resp.json["error"]

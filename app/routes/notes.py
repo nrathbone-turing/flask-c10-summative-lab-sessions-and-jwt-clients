@@ -16,7 +16,7 @@ bp = Blueprint("notes", __name__)
 @login_required
 def list_notes():
     """
-    List notes for the current user.
+    List notes for the current logged-in user.
     - Supports pagination with ?page=N&per_page=M.
     - Returns 200 with notes data and pagination metadata.
     """
@@ -41,7 +41,7 @@ def list_notes():
 @login_required
 def create_note():
     """
-    Create a new note for the current user.
+    Create a new note for the current logged-in user.
     - Requires at least 'title' in JSON body.
     - Returns 201 with created note on success.
     - Returns 400 if 'title' is missing or empty.
@@ -55,5 +55,6 @@ def create_note():
     db.session.add(note)
     db.session.commit()
     return note_schema.dump(note), 201
+
 
 notes_bp = bp

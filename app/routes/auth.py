@@ -1,9 +1,9 @@
 # app/routes/auth.py
 # Authentication routes using Flask-Login.
-# - /auth/register: Register new user
-# - /auth/login: Log in existing user
-# - /auth/logout: Log out user
-# - /auth/me: Return current logged-in user
+# - /signup: Register new user
+# - /login: Log in existing user
+# - /logout: Log out user
+# - /check_session: Return current logged-in user (or {} if none)
 
 from flask import Blueprint, request
 from flask_login import login_user, logout_user, login_required, current_user
@@ -13,66 +13,73 @@ from ..schemas import user_schema
 
 bp = Blueprint("auth", __name__)
 
-@bp.post("/register")
-def register():
+@bp.post("/signup")
+def signup():
     """
-    Register a new user.
-    - Requires 'email' and 'password' in JSON body.
-    - Returns 201 with user data and starts a session on success.
-    - Returns 400 if fields are missing or email already exists.
+    Register a new user and start a session.
+    - Requires 'username', 'password', and 'password_confirmation' in JSON body.
+    - Returns 201 with user data if successful.
+    - Returns 400 if fields are missing, confirmation mismatch, or username already exists.
     """
     data = request.get_json()
-    if not data.get("email") or not data.get("password"):
-        return {"error": "Email and password are required."}, 400
 
-    if User.query.filter_by(email=data["email"]).first():
-        return {"error": "That email is already registered."}, 400
+    if not data.get("username") or not data.get("password"):
+        return {"error": "Username and password are required."}, 400
 
-    user = User(email=data["email"])
+    if data.get("password") != data.get("password_confirmation"):
+        return {"error": "Password and confirmation do not match."}, 400
+
+    if User.query.filter_by(email=data["username"]).first():
+        return {"error": "That username is already taken."}, 400
+
+    user = User(email=data["username"])
     user.set_password(data["password"])
     db.session.add(user)
     db.session.commit()
     login_user(user)  # start a session automatically
-    return {"user": user_schema.dump(user)}, 201
+
+    return {"id": user.id, "username": user.email}, 201
 
 
 @bp.post("/login")
 def login():
     """
     Log in an existing user.
-    - Requires 'email' and 'password' in JSON body.
+    - Requires 'username' and 'password' in JSON body.
     - Returns 200 with user data if credentials are valid.
-    - Returns 401 if email not found or password is incorrect.
+    - Returns 401 if username not found or password is incorrect.
     """
     data = request.get_json()
-    user = User.query.filter_by(email=data.get("email")).first()
+    user = User.query.filter_by(email=data.get("username")).first()
     if not user or not user.check_password(data.get("password", "")):
-        return {"error": "Invalid email or password."}, 401
+        return {"error": "Invalid username or password."}, 401
 
     login_user(user)
-    return {"user": user_schema.dump(user)}, 200
+    return {"id": user.id, "username": user.email}, 200
 
 
-@bp.post("/logout")
+@bp.delete("/logout")
 @login_required
 def logout():
     """
     Log out the current user.
     - Requires an active session.
-    - Returns 200 with confirmation message.
+    - Returns 200 with empty JSON {} on success.
     """
     logout_user()
-    return {"message": "You have been logged out successfully."}, 200
+    return {}, 200
 
 
-@bp.get("/me")
-@login_required
-def me():
+@bp.get("/check_session")
+def check_session():
     """
-    Get details of the current logged-in user.
-    - Requires an active session.
-    - Returns 200 with user data.
+    Check if a user session is active.
+    - Returns 200 with user data if logged in.
+    - Returns 200 with {} if not logged in.
     """
-    return {"user": user_schema.dump(current_user)}, 200
+    if not current_user.is_authenticated:
+        return {}, 200
+    return {"id": current_user.id, "username": current_user.email}, 200
+
 
 auth_bp = bp
