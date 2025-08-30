@@ -6,10 +6,14 @@
 # - Handle invalid/missing notes (404s)
 
 def login(client, email="noteuser@example.com", password="pw"):
+    """Helper: register and log in a test user."""
+
     client.post("/auth/register", json={"email": email, "password": password})
     return client
 
 def test_create_and_list_notes(client):
+    """Create a note and verify it appears in notes list."""
+
     client = login(client)
 
     # Create
@@ -23,10 +27,14 @@ def test_create_and_list_notes(client):
     assert len(resp.json["data"]) == 1
 
 def test_notes_requires_login(client):
+    """Accessing /notes without login should return 302 or 401."""
+    
     resp = client.get("/notes")
     assert resp.status_code in (302, 401)
 
 def test_notes_pagination(client):
+    """Verify pagination works: per_page, page count, empty pages."""
+    
     client = login(client)
 
     # Create 15 notes
@@ -59,10 +67,14 @@ def test_notes_pagination(client):
     assert data["meta"]["pages"] == 3
 
 def test_cannot_access_notes_without_login(client):
+    """Unauthorized request to /notes should be blocked."""
+    
     resp = client.get("/notes")
     assert resp.status_code in (302, 401)
 
 def test_get_nonexistent_note_returns_404(client):
+    """Requesting a non-existent note ID should return 404."""
+    
     client.post("/auth/register", json={"email": "noteuser@example.com", "password": "pw"})
     resp = client.get("/notes/999")
     assert resp.status_code == 404
