@@ -27,6 +27,10 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(notes_bp, url_prefix="/notes")
 
+    @app.get("/")
+    def health():
+        return {"status": "ok"}
+    
     return app
 
 @login_manager.user_loader
