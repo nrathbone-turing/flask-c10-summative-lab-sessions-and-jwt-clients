@@ -1,3 +1,7 @@
+# wsgi.py
+# Application entry point.
+# Creates app via factory and runs Flask development server.
+
 from app import create_app
 
 app = create_app()

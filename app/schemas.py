@@ -1,3 +1,6 @@
+# app/schemas.py
+# Marshmallow schemas for serializing User and Note models into JSON.
+
 from marshmallow import Schema, fields
 
 class UserSchema(Schema):

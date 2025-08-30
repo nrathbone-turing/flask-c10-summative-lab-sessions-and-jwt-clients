@@ -1,3 +1,8 @@
+# tests/test_models.py
+# Tests User model functionality.
+# - Password hashing and verification
+# - Email field validation
+
 from app.models import User
 
 def test_password_hashing(user):

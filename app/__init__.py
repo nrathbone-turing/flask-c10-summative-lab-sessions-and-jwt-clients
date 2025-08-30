@@ -1,3 +1,9 @@
+# app/__init__.py
+# Flask application factory.
+# - Initializes extensions (db, migrate, bcrypt, login_manager)
+# - Registers blueprints (auth, notes)
+# - Configures the app and provides root health check
+
 import os
 from flask import Flask
 from flask_login import LoginManager

@@ -1,3 +1,11 @@
+# tests/test_auth_routes.py
+# Tests authentication routes.
+# - Register new users
+# - Prevent duplicate registration
+# - Log in with correct/incorrect credentials
+# - Require login for /auth/me
+# - Log out session
+
 def test_register_and_login(client):
     # Register
     resp = client.post("/auth/register", json={"email": "new@example.com", "password": "pw"})

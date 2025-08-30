@@ -1,3 +1,9 @@
+# app/routes/notes.py
+# Notes resource routes (CRUD).
+# - /notes: List or create notes (pagination supported)
+# - /notes/<id>: Retrieve, update, or delete individual notes
+# All routes require authentication.
+
 from flask import Blueprint, request
 from flask_login import login_required, current_user
 from ..extensions import db

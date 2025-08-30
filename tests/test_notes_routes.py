@@ -1,3 +1,10 @@
+# tests/test_notes_routes.py
+# Tests Notes resource routes.
+# - Create and list notes
+# - Enforce login for notes endpoints
+# - Pagination of notes
+# - Handle invalid/missing notes (404s)
+
 def login(client, email="noteuser@example.com", password="pw"):
     client.post("/auth/register", json={"email": email, "password": password})
     return client

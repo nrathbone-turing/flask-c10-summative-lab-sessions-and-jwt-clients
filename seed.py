@@ -1,3 +1,9 @@
+# seed.py
+# Database seeding script.
+# - Drops and recreates tables
+# - Adds demo user (demo@example.com / password123)
+# - Adds sample notes for testing
+
 from faker import Faker
 from app import create_app
 from app.extensions import db

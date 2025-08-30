@@ -1,3 +1,10 @@
+# app/routes/auth.py
+# Authentication routes using Flask-Login.
+# - /auth/register: Register new user
+# - /auth/login: Log in existing user
+# - /auth/logout: Log out user
+# - /auth/me: Return current logged-in user
+
 from flask import Blueprint, request
 from flask_login import login_user, logout_user, login_required, current_user
 from ..models import User
