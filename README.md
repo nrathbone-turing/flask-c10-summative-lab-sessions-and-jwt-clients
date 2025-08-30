@@ -13,11 +13,11 @@ Users can register, log in, and manage personal notes securely. The backend is d
 - Seed script with demo user + notes
 
 ## Future Considerations
-- **Frontend Integration**: Connect this backend to the provided React client (`client-with-sessions`) to enable a complete user experience.  
+- **Frontend Integration**: Connect this backend to the provided React client (`client-with-sessions`) for a complete user experience.  
 - **Production Database**: Swap SQLite for Postgres (or another RDBMS) for scalability.  
 - **Security Enhancements**: Add CSRF protection, stronger password policies, and rate limiting.  
 - **Additional Resources**: Extend beyond notes (e.g., tasks, expenses, journal entries) with more models and CRUD endpoints.  
-- **Testing Coverage**: Expand tests to cover more edge cases (invalid input, unauthorized access, 404s).  
+- **Testing Coverage**: Add more validation/error-handling tests (e.g., empty note title updates, invalid JSON payloads).  
 
 ## Tech Stack
 - **Backend**: Flask + Flask-Migrate + SQLAlchemy
@@ -127,8 +127,8 @@ pytest -v
 Covers:
 - App health endpoint
 - User model password hashing
-- Auth routes (register, login, logout, me)
-- Notes routes (CRUD, pagination, auth protection)
+- Auth routes (register, login, logout, me, duplicate/invalid credentials)
+- Notes routes (CRUD, pagination, auth protection, 404s)
 
 ## Project Structure
 
