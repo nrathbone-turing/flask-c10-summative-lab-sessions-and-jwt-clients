@@ -1,12 +1,14 @@
 # Flask Summative Lab – Sessions Backend
 
-This is a Flask API backend built with session-based authentication (`Flask-Login`).
-It is designed to work with the provided **client-with-sessions** frontend.
+This is a Flask API backend built with session-based authentication (`Flask-Login`).  
+It is designed to work with the provided **client-with-sessions** frontend of the Productivity Tool project.  
+Users can register, log in, and manage personal notes securely.
 
 ## Features
 - User registration, login, logout
-- Session-based authentication
+- Session-based authentication (Flask-Login + cookies)
 - CRUD for user-owned Notes
+- Notes index route supports pagination
 - SQLite database with Flask-Migrate
 - Seed script with demo user + notes
 
@@ -28,12 +30,19 @@ Visit: http://localhost:5000
 - Password: password123
 
 ## Endpoints
-- POST /auth/register
-- POST /auth/login
-- POST /auth/logout
-- GET /auth/me
-- GET /notes
-- POST /notes
+
+### Auth
+- POST /auth/register – Register a new user
+- POST /auth/login – Log in as existing user
+- POST /auth/logout – Log out of session
+- GET /auth/me – Get current logged-in user
+
+### Notes
+- GET /notes?page=1&per_page=10 – List notes (paginated)
+- POST /notes – Create a new note
+- GET /notes/<id> – Get a note by ID
+- PATCH /notes/<id> – Update a note
+- DELETE /notes/<id> – Delete a note
 
 ## Repo Structure
 
