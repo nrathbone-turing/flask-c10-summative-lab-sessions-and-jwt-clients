@@ -1,3 +1,8 @@
+# tests/conftest.py
+# Pytest configuration and fixtures.
+# - Provides app fixture (with in-memory SQLite DB)
+# - Provides test client and sample user fixtures
+
 import pytest
 import os
 import sys

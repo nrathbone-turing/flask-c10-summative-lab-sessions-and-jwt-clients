@@ -1,3 +1,8 @@
+# app/models.py
+# SQLAlchemy models.
+# - User model with bcrypt password hashing (Flask-Login compatible)
+# - Note model with user ownership relationship
+
 from flask_login import UserMixin
 from .extensions import db, bcrypt
 
