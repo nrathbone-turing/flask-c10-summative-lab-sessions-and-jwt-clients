@@ -12,6 +12,7 @@ def test_register_and_login(client):
 def test_login_invalid(client):
     resp = client.post("/auth/login", json={"email": "nope@example.com", "password": "pw"})
     assert resp.status_code == 401
+    assert "Invalid" in resp.json["error"]  # check for meaningful message
 
 def test_me_requires_login(client):
     resp = client.get("/auth/me")
@@ -20,8 +21,8 @@ def test_me_requires_login(client):
 def test_register_duplicate_email(client):
     client.post("/auth/register", json={"email": "dup@example.com", "password": "pw"})
     resp = client.post("/auth/register", json={"email": "dup@example.com", "password": "pw"})
-    assert resp.status_code == 400 or resp.status_code == 409
-    assert "error" in resp.json
+    assert resp.status_code == 400
+    assert "already" in resp.json["error"]  # check clarity
 
 def test_login_wrong_password(client, user):
     resp = client.post("/auth/login", json={"email": user.email, "password": "wrong"})

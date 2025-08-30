@@ -59,4 +59,4 @@ def test_get_nonexistent_note_returns_404(client):
     client.post("/auth/register", json={"email": "noteuser@example.com", "password": "pw"})
     resp = client.get("/notes/999")
     assert resp.status_code == 404
-    assert "error" in resp.json
+    assert "not found" in resp.json["error"]  # explicit error message check
