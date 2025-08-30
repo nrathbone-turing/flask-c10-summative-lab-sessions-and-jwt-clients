@@ -50,3 +50,13 @@ def test_notes_pagination(client):
     assert data["data"] == []
     assert data["meta"]["page"] == 10
     assert data["meta"]["pages"] == 3
+
+def test_cannot_access_notes_without_login(client):
+    resp = client.get("/notes")
+    assert resp.status_code in (302, 401)
+
+def test_get_nonexistent_note_returns_404(client):
+    client.post("/auth/register", json={"email": "noteuser@example.com", "password": "pw"})
+    resp = client.get("/notes/999")
+    assert resp.status_code == 404
+    assert "error" in resp.json

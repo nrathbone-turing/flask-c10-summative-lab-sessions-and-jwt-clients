@@ -16,3 +16,14 @@ def test_login_invalid(client):
 def test_me_requires_login(client):
     resp = client.get("/auth/me")
     assert resp.status_code == 302 or resp.status_code == 401
+
+def test_register_duplicate_email(client):
+    client.post("/auth/register", json={"email": "dup@example.com", "password": "pw"})
+    resp = client.post("/auth/register", json={"email": "dup@example.com", "password": "pw"})
+    assert resp.status_code == 400 or resp.status_code == 409
+    assert "error" in resp.json
+
+def test_login_wrong_password(client, user):
+    resp = client.post("/auth/login", json={"email": user.email, "password": "wrong"})
+    assert resp.status_code == 401
+    assert "error" in resp.json
