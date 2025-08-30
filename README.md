@@ -130,6 +130,7 @@ Covers:
 - User model password hashing
 - Auth routes (signup, login, logout, check_session, invalid credentials)
 - Notes routes (CRUD: create, list, get, update, delete)
+- Notes timestamps (created_at, updated_at auto-population & update behavior)
 - Pagination metadata
 - Auth protection & unauthorized access
 - 404 handling & validation errors
