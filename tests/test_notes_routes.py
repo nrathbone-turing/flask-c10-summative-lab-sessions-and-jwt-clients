@@ -14,3 +14,7 @@ def test_create_and_list_notes(client):
     resp = client.get("/notes")
     assert resp.status_code == 200
     assert len(resp.json["data"]) == 1
+
+def test_notes_requires_login(client):
+    resp = client.get("/notes")
+    assert resp.status_code in (302, 401)
