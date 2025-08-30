@@ -79,35 +79,35 @@ Note
 Note: All `/notes` routes and `/auth/me` are protected by login. Requests without an active session will return **401 Unauthorized**.
 
 ### Auth
-- `POST /auth/register` – Register a new user
-- `POST /auth/login` – Log in as existing user
-- `POST /auth/logout` – Log out of session
-- `GET /auth/me` – Get current logged-in user
+- `POST /signup` – Register a new user
+- `POST /login` – Log in as existing user
+- `DELETE /logout` – Log out of session
+- `GET /check_session` – Get current logged-in user
 
 ### Notes
 - `GET /notes?page=1&per_page=10` – List notes (paginated)
 - `POST /notes` – Create a new note
 - `GET /notes/<id>` – Get a note by ID
-- `PATCH /notes/<id>` – Update a note
+- `PUT /notes/<id>` – Update a note
 - `DELETE /notes/<id>` – Delete a note
 
 ## Example REST calls
 
 ```
 # Register a new user
-curl -X POST http://127.0.0.1:5000/auth/register \
+curl -X POST http://127.0.0.1:5000/signup \
   -H "Content-Type: application/json" \
-  -d '{"email":"new@example.com","password":"secret"}' \
+  -d '{"username":"newuser","password":"secret","password_confirmation":"secret"}' \
   -c cookies.txt -b cookies.txt
 
 # Login
-curl -X POST http://127.0.0.1:5000/auth/login \
+curl -X POST http://127.0.0.1:5000/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"new@example.com","password":"secret"}' \
+  -d '{"username":"newuser","password":"secret"}' \
   -c cookies.txt -b cookies.txt
 
 # Check session
-curl http://127.0.0.1:5000/auth/me -c cookies.txt -b cookies.txt
+curl http://127.0.0.1:5000/check_session -c cookies.txt -b cookies.txt
 
 # Create a note
 curl -X POST http://127.0.0.1:5000/notes \
@@ -127,8 +127,12 @@ pytest -v
 Covers:
 - App health endpoint
 - User model password hashing
-- Auth routes (register, login, logout, me, duplicate/invalid credentials)
-- Notes routes (CRUD, pagination, auth protection, 404s)
+- Auth routes (signup, login, logout, check_session, duplicate/invalid credentials)
+- Notes routes (full CRUD: create, list, get, update, delete)
+- Pagination metadata
+- Auth protection and unauthorized access
+- 404 and validation error handling
+
 
 ## Project Structure
 
