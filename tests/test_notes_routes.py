@@ -18,3 +18,35 @@ def test_create_and_list_notes(client):
 def test_notes_requires_login(client):
     resp = client.get("/notes")
     assert resp.status_code in (302, 401)
+
+def test_notes_pagination(client):
+    client = login(client)
+
+    # Create 15 notes
+    for i in range(15):
+        client.post("/notes", json={"title": f"Note {i}", "body": "Body"})
+
+    # Page 1 with per_page=5
+    resp = client.get("/notes?page=1&per_page=5")
+    assert resp.status_code == 200
+    data = resp.json
+    assert len(data["data"]) == 5
+    assert data["meta"]["page"] == 1
+    assert data["meta"]["per_page"] == 5
+    assert data["meta"]["total"] == 15
+    assert data["meta"]["pages"] == 3
+
+    # Page 2 with per_page=5
+    resp = client.get("/notes?page=2&per_page=5")
+    assert resp.status_code == 200
+    data = resp.json
+    assert len(data["data"]) == 5
+    assert data["meta"]["page"] == 2
+
+    # Page beyond range returns empty list but valid meta
+    resp = client.get("/notes?page=10&per_page=5")
+    assert resp.status_code == 200
+    data = resp.json
+    assert data["data"] == []
+    assert data["meta"]["page"] == 10
+    assert data["meta"]["pages"] == 3
