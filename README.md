@@ -18,7 +18,7 @@ Users can register, log in, and manage personal notes securely. The backend is d
 - **Security Enhancements**: Add CSRF protection, enforce stronger password rules, and consider rate limiting login/signup attempts.
 - **Additional Resources**: Add additional resources beyond notes (e.g., tasks, expenses, journal entries) with corresponding CRUD + tests.
 - **Testing Coverage**: Expand pytest coverage for edge cases (invalid JSON payloads, malformed requests, stress/performance tests).
-**Dev Experience**: Improve editor compatibility (e.g., Pipenv + VSCode/Pylance integration), Dockerize environment for smoother setup.
+- **Dev Experience**: Improve editor compatibility (e.g., Pipenv + VSCode/Pylance integration), Dockerize environment for smoother setup.
 
 ## Tech Stack
 - **Backend**: Flask + Flask-Migrate + SQLAlchemy
@@ -126,46 +126,51 @@ curl "http://127.0.0.1:5000/notes?page=1&per_page=5" \
 pytest -v
 ```
 Covers:
-- App health endpoint
+- Health endpoint
 - User model password hashing
-- Auth routes (signup, login, logout, check_session, duplicate/invalid credentials)
-- Notes routes (full CRUD: create, list, get, update, delete)
+- Auth routes (signup, login, logout, check_session, invalid credentials)
+- Notes routes (CRUD: create, list, get, update, delete)
 - Pagination metadata
-- Auth protection and unauthorized access
-- 404 and validation error handling
+- Auth protection & unauthorized access
+- 404 handling & validation errors
 
 
 ## Project Structure
-
 ```
 flask-c10-summative-lab-sessions-and-jwt-clients/
 ├── app/
-│   ├── __init__.py
-│   ├── extensions.py
-│   ├── models.py
-│   ├── schemas.py
+│   ├── __init__.py              # Flask app factory, register blueprints, init extensions
+│   ├── extensions.py            # db, migrate, bcrypt, login_manager instances
+│   ├── models.py                # SQLAlchemy models: User, Note
+│   ├── schemas.py               # Marshmallow schemas for User and Note
 │   └── routes/
-│       ├── __init__.py
-│       ├── auth.py
-│       └── notes.py
+│       ├── __init__.py          # Makes routes a package
+│       ├── auth.py              # Auth routes: signup, login, logout, check_session
+│       └── notes.py             # Notes CRUD routes (list, create, get, update, delete)
 │
-├── client-with-jwt/               # provided frontend (JWT version)
-├── client-with-sessions/          # frontend I’ll use (Sessions)
+├── client-with-jwt/             # Provided frontend (JWT version) -- unused; use client-with-sessions for grading
+├── client-with-sessions/        # Provided frontend (sessions version, target integration)
 │
-├── migrations/                    # DB migrations
-├── tests/                         # pytest test suite
-│   ├── conftest.py
-│   ├── test_app.py
-│   ├── test_models.py
-│   ├── test_auth_routes.py
-│   └── test_notes_routes.py
+├── migrations/                  # Alembic migrations folder (auto-managed)
+│   ├── versions/                # Auto-generated migration scripts
+│   └── env.py / script.py.mako  # Migration config files
 │
-├── seed.py                        # seed script
-├── wsgi.py                        # app entrypoint
-├── Pipfile
-├── Pipfile.lock
-├── .gitignore
-└── README.md
+├── tests/                       # pytest suite for backend
+│   ├── conftest.py              # Pytest fixtures (e.g., test client, db setup)
+│   ├── test_app.py              # App-level tests (health check, etc.)
+│   ├── test_models.py           # Model unit tests (password hashing, etc.)
+│   ├── test_auth_routes.py      # Tests for signup, login, logout, check_session
+│   └── test_notes_routes.py     # Tests for notes CRUD, pagination, auth protection
+│
+├── instance/                    # SQLite dev.db lives here (auto-created)
+├── seed.py                      # Seed script: creates demo user + notes
+├── wsgi.py                      # App entrypoint (used by flask run / python wsgi.py)
+├── manage.py                    # Flask CLI entrypoint (db migrate/upgrade commands)
+├── .flaskenv                    # Flask env vars (FLASK_APP, FLASK_DEBUG)
+├── Pipfile                      # Pipenv dependency definitions
+├── Pipfile.lock                 # Lockfile with exact dependency versions
+├── .gitignore                   # Ignore rules for venv, db, pycache, etc.
+└── README.md                    # Project documentation
 ```
 
 ## About This Repo
